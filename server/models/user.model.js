@@ -23,6 +23,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  city:{
+    type:String,
+    required:true
+  },
+  state:{
+    type:String,
+    required:true
+  },
+  isAdmin:{
+    type:Boolean,
+    default:false
+  },
+
   isVerified:{
     type:Boolean,
     default:false
@@ -66,7 +79,8 @@ userSchema.methods.generatePasswordResetToken= function (){
 };
 
 userSchema.methods.comparePassword = async function (password) {
-  return await bcrypt.compare(password, this.password);
+  const isMatch = await bcrypt.compare(password, this.password);
+  return isMatch;
 };
 
 //Export the model

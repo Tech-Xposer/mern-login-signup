@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const errorHandler = require("../handlers/error.handler");
+const User = require("../models/user.model");
 const SECRET_TOKEN = process.env.SECRET_TOKEN;
 
 const auth = (req, res, next) => {
@@ -17,5 +18,20 @@ const auth = (req, res, next) => {
     return res.status(error.statusCode || 500).json(new errorHandler(error.statusCode || 500, error.message));
   }
 };
+const authToAdminOnly = async(req, res, next) => {
+  try {
+    const {_id} = req.user
+    const user = await User.findById(_id)
+    if (!user) {
+      throw new errorHandler(404, "User Not Found");
+    }
+    if (user.role !== "admin" ) {
+      throw new errorHandler(403, "Access Denied");
+    }
+    next();
+  } catch (error) {
+    return res.status(error.statusCode || 500).json(new errorHandler(error.statusCode || 500, error.message));
+  }
+};
 
-module.exports = auth;
+module.exports = {auth, authToAdminOnly};

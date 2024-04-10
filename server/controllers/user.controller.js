@@ -1,7 +1,7 @@
 const User = require("../models/user.model");
 const sendEmail = require("../services/email.service");
 const { isEmail, isStrongPassword, isJWT } = require("validator");
-const {decodeToken} = require("../services/token.service");
+const { decodeToken } = require("../services/token.service");
 const {
   userVerificationTemplate,
   userPasswordResetTemplate,
@@ -11,20 +11,22 @@ const ApiError = require("../handlers/error.handler");
 const { postUserSignupValidator } = require("../services/validator.service");
 
 const postUser = async (req, res) => {
-  const { name, email, password, mobile } = req.body;
+  const { name, email, password, mobile, state, city } = req.body;
   try {
-    postUserSignupValidator(name, email, password, mobile);
+    console.log(req.body);
+  
+    postUserSignupValidator(name, email, password, mobile, city, state);
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      throw ApiError(409, "User already registered");
+      throw new ApiError(409, "User already registered");
     }
     const avatar = req.file ? req.file.filename : null;
-    const user = await User.create({ name, email, password, mobile, avatar });
+    const user = await User.create({ name, email, password, mobile, avatar, state, city });
 
     const verificationToken = user.createEmailVerificationToken();
     const verificationLink = `${process.env.BASE_URL}:${process.env.PORT}/api/v1/auth/verify/${verificationToken}`;
-    await sendEmail(email, userVerificationTemplate(name, verificationLink));
-
+    const checkMail = await sendEmail(email, userVerificationTemplate(name, verificationLink));
+    console.log(checkMail);
     return res
       .status(201)
       .json(responseHandler(201, "User created successfully"));
@@ -32,7 +34,11 @@ const postUser = async (req, res) => {
     return res
       .status(error.statusCode || 500)
       .json(
-        ApiError(error.statusCode || 500, error.message, "User not created"),
+        new ApiError(
+          error.statusCode || 500,
+          error.message,
+          "User not created",
+        ),
       );
   }
 };
@@ -64,14 +70,16 @@ const postResetPassword = async (req, res) => {
   const { token } = req.params;
   try {
     if (!isJWT(token)) throw new ApiError(400, "Invalid Token");
-    if(!password || !confirmPassword) throw new ApiError(400, "All fields required");
+    if (!password || !confirmPassword)
+      throw new ApiError(400, "All fields required");
     const { _id } = decodeToken(token);
     const user = await User.findById(_id);
     if (!user) throw new ApiError(404, "User not found");
     if (password !== confirmPassword)
       throw new ApiError(400, "Passwords do not match");
     user.password = password;
-    if(!isStrongPassword(password)) throw new ApiError(400, "Password Not Strong")
+    if (!isStrongPassword(password))
+      throw new ApiError(400, "Password Not Strong");
     await user.save();
     return res
       .status(200)

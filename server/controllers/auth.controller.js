@@ -4,8 +4,15 @@ const ApiError = require("../handlers/error.handler");
 const responseHandler = require("../handlers/response.handler");
 const { postLoginValidator } = require("../services/validator.service");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const postLogin = async (req, res) => {
   try {
+    const options = {
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    };
     const { email, password } = req.body;
     postLoginValidator(email, password);
     const existingUser = await User.findOne({ email });
@@ -14,12 +21,7 @@ const postLogin = async (req, res) => {
     if (!isValidPassword) throw new ApiError(400, "Invalid Password");
     if (!existingUser.isVerified) throw new ApiError(400, "Email not verified");
     const token = existingUser.generateLoginToken();
-    res.cookie("token", token, {
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-    });
+    res.cookie("token", token);
     return res
       .status(200)
       .json(responseHandler(200, "Login Success", { token }));
@@ -54,10 +56,10 @@ const verifyEmail = async (req, res) => {
 const currentUser = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select(
-      "-password -isVerified -role",
+      "-password -isVerified  -updatedAt -__v -createdAt",
     );
     if (!user) throw new ApiError(404, "User Not Found");
-    return res.status(200).json(responseHandler(200, "User Details", { user }));
+    return res.status(200).json(responseHandler(200, "User Details", user));
   } catch (error) {
     return res
       .status(error.statusCode || 500)
@@ -77,17 +79,29 @@ const postLogoutUser = async (req, res) => {
 };
 
 const postResetPassword = async (req, res) => {
-  console.log(req.user);
-  const { password } = req.body;
   try {
-    if(!password) throw new ApiError(400, "All fields required");
-    if (!isStrongPassword(password))
+    const { password, newPassword } = req.body;
+
+    if (!password) throw new ApiError(400, "Old Password is required");
+    if (!newPassword) throw new ApiError(400, "New Password is required");
+    if (!isStrongPassword(newPassword))
       throw new ApiError(400, "Password Not Strong");
+
+    // Retrieve user ID from authenticated request
     const { _id } = req.user;
+
+    // Fetch user from database
     const user = await User.findById(_id);
     if (!user) throw new ApiError(404, "User Not Found");
-    user.password = password;
+
+    // Check if the provided password matches the user's stored password
+    const checkPassword = await user.comparePassword(password);
+    if (!checkPassword)
+      throw new ApiError(400, "Your Old Password is incorrect");
+
+    user.password = newPassword;
     await user.save();
+
     return res.status(200).json(responseHandler(200, "Password Reset Success"));
   } catch (error) {
     return res
@@ -95,4 +109,24 @@ const postResetPassword = async (req, res) => {
       .json(new ApiError(error.statusCode || 500, error.message));
   }
 };
-module.exports = { postLogin, verifyEmail, currentUser, postLogoutUser, postResetPassword};
+
+const getAllUsers = async(req,res)=>{
+  try {
+    const users = await User.find({}).select("-password -createdAt -updatedAt");;
+    return res.status(200).json(responseHandler(200, "Users", {
+      total_users: users.length,
+      users
+    }));
+  } catch (error) {
+    return res.status(error.statusCode || 500).json(new ApiError(error.statusCode || 500, error.message));
+  }
+}
+
+module.exports = {
+  postLogin,
+  verifyEmail,
+  currentUser,
+  postLogoutUser,
+  postResetPassword,
+  getAllUsers
+};

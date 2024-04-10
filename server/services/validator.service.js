@@ -1,22 +1,24 @@
 const { isEmail, isStrongPassword, isMobilePhone } = require("validator");
-const errorHandler = require("../handlers/error.handler");
-const postUserSignupValidator = (name, email, password, mobile) => {
-  if (!name || !email || !password || !mobile) {
-    throw errorHandler(400, "All Fields Required!");
-  }
-  if (name.length < 3) throw errorHandler(400, "Invalid Name!");
+const ApiError = require("../handlers/error.handler");
+const postUserSignupValidator = (name, email, password, mobile, city, state) => {
+  if (!name || !email || !password || !mobile || !city || !state) {
 
-  if (!isEmail(email)) throw errorHandler("Invalid Email");
+    throw new ApiError(400, "All Fields Required!");
+  }
+  if (name.length < 3) throw new ApiError(400, "Invalid Name!");
+
+  if (!isEmail(email)) throw new ApiError("Invalid Email");
   if (!isStrongPassword(password))
-    throw errorHandler("Strong Password Required!");
+    throw new ApiError("Strong Password Required!");
   if (!isMobilePhone(mobile, "any"))
-    throw errorHandler("Invalid Mobile Number");
+    throw new ApiError("Invalid Mobile Number");
+
 };
 
 const postLoginValidator = (email, password) => {
-  if (!email) throw errorHandler(400, "Email Required!");
-  if (!password) throw errorHandler(400, "Password Required!");
-  if (!isEmail(email)) throw errorHandler(400, "Email Not Valid");
+  if (!email) throw new ApiError(400, "Email Required!");
+  if (!password) throw new ApiError(400, "Password Required!");
+  if (!isEmail(email)) throw new ApiError(400, "Email Not Valid");
 };
 
 module.exports = { postUserSignupValidator, postLoginValidator };
