@@ -24,7 +24,7 @@ const postUser = async (req, res) => {
     const user = await User.create({ name, email, password, mobile, avatar, state, city });
 
     const verificationToken = user.createEmailVerificationToken();
-    const verificationLink = `${process.env.BASE_URL}:${process.env.PORT}/api/v1/auth/verify/${verificationToken}`;
+    const verificationLink = `${process.env.BASE_URL}/api/v1/auth/verify/${verificationToken}`;
     const checkMail = await sendEmail(email, userVerificationTemplate(name, verificationLink));
     console.log(checkMail);
     return res
@@ -53,7 +53,7 @@ const generateResetPasswordEmail = async (req, res) => {
     if (!user) throw new ApiError(404, "User not found");
     const resetToken = user.generatePasswordResetToken();
     await user.save();
-    const resetLink = `${process.env.BASE_URL}:${process.env.PORT}/api/v1/user/reset-password/${resetToken}`;
+    const resetLink = `${process.env.BASE_URL}/api/v1/user/reset-password/${resetToken}`;
     await sendEmail(email, userPasswordResetTemplate(user.name, resetLink));
     return res
       .status(200)

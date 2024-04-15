@@ -4,7 +4,7 @@ const ApiError = require("../handlers/error.handler");
 const responseHandler = require("../handlers/response.handler");
 const { postLoginValidator } = require("../services/validator.service");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+
 const postLogin = async (req, res) => {
   try {
     const options = {
@@ -22,6 +22,7 @@ const postLogin = async (req, res) => {
     if (!existingUser.isVerified) throw new ApiError(400, "Email not verified");
     const token = existingUser.generateLoginToken();
     res.cookie("token", token);
+
     return res
       .status(200)
       .json(responseHandler(200, "Login Success", { token }));
@@ -110,17 +111,7 @@ const postResetPassword = async (req, res) => {
   }
 };
 
-const getAllUsers = async(req,res)=>{
-  try {
-    const users = await User.find({}).select("-password -createdAt -updatedAt");;
-    return res.status(200).json(responseHandler(200, "Users", {
-      total_users: users.length,
-      users
-    }));
-  } catch (error) {
-    return res.status(error.statusCode || 500).json(new ApiError(error.statusCode || 500, error.message));
-  }
-}
+
 
 module.exports = {
   postLogin,
@@ -128,5 +119,4 @@ module.exports = {
   currentUser,
   postLogoutUser,
   postResetPassword,
-  getAllUsers
 };

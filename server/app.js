@@ -3,13 +3,14 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const apiResponse = require("./handlers/response.handler");
+const { auth, authToAdminOnly } = require("./middlewares/auth.middleware");
 //configuring express
 const app = express();
 
 //using middlesware
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:4173"],
     credentials: true,
   }),
 );
@@ -27,5 +28,6 @@ app.get("/", (req, res) => {
 //routes
 app.use("/api/v1/user", require("./routes/user.routes"));
 app.use("/api/v1/auth", require("./routes/auth.routes"));
+app.use("/api/v1/admin",[auth,authToAdminOnly], require("./routes/admin.routes"));
 
 module.exports = app;
