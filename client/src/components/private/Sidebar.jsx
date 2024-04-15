@@ -1,10 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Home, User, LockKeyhole, LogOut, Moon, Users } from "lucide-react";
+import {
+  Home,
+  User,
+  LockKeyhole,
+  LogOut,
+  Moon,
+  Users,
+  Sun,
+} from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { getToken, removeToken, removeUser } from "../../utils/utils";
 const Sidebar = () => {
   const navigate = useNavigate();
+
   const [mode, setMode] = useState(true);
+ 
+
   const handleDarkMode = () => {
     setMode(!mode);
   };
@@ -14,6 +25,7 @@ const Sidebar = () => {
       `${import.meta.env.VITE_SERVER_HOST}/auth/logout`,
       {
         method: "GET",
+        credentials: "include",
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -21,18 +33,23 @@ const Sidebar = () => {
     );
     const data = await response.json();
     if (data.success) {
-      removeToken();
-      removeUser();
+      localStorage.clear();
       navigate("/");
     }
   };
   return (
     <div
       className={`flex flex-col h-screen w-full items-center  ${
-        mode ? "bg-gray-900" : "bg-white text-black "
+        mode ? "bg-gray-900" : "bg-white text-black"
       } text-white rounded-r-lg`}
     >
-      <h1 className="text-3xl flex justify-center pt-5">AuthGuardian</h1>
+      <h1
+        className={`text-3xl flex justify-center pt-5 ${
+          mode ? "text-white" : "text-black"
+        }`}
+      >
+        AuthGuardian
+      </h1>
       <ul
         className={`flex flex-col m-5 gap-5 ${
           mode ? "text-white" : "text-black"
@@ -85,6 +102,7 @@ const Sidebar = () => {
             </li>
           </NavLink>
         )}
+        
         <NavLink
           className={({ isActive }) =>
             isActive
@@ -109,12 +127,12 @@ const Sidebar = () => {
           Logout
         </li>
         <li className="text-xl flex gap-2 items-center p-2">
-          <Moon />
-          <p className="text-base">Dark Mode</p>
+          {mode ? <Moon /> : <Sun />}
+          <p className="text-base">{mode ? "Dark" : "Light"} Mode</p>
           <label className="inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
-              value=""
+              value="true"
               className="sr-only peer"
               onChange={handleDarkMode}
             />

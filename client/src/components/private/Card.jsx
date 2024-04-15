@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { Pencil } from "lucide-react";
-import { render } from "react-dom";
-const activity = {
-  personal: 45,
-  professional: 35,
-};
-const Card = ({ user, avatar, onEdit }) => {
+import { getUser } from "../../utils/utils";
+
+const Card = ({onEdit}) => {
+  const user = getUser();
+  console.log(user);
+  const avatar = user?.avatar ? `${import.meta.env.VITE_AVATAR_URL}/${user.avatar}` : null;
   return (
-    <div className="container flex mx-auto text-center p-8 border border-gray-300 rounded-md shadow-md bg-white">
+    <div className="container flex mx-auto text-center p-8 border border-gray-300 rounded-md shadow-md bg-white w-[600px] h-[300px]">
       <div className="left w-[200px]">
         <img src={avatar} alt={user?.name} className="rounded-full w-[200px]" />
         <p>{user?.name}</p>

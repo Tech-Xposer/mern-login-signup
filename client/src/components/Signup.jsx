@@ -1,11 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import bg from "../assets/Mobile login-pana.png";
+
+
 import Input from "./inputs/Input";
-import { User, Key, AtSign, Phone, LogIn, CircleUserRound } from "lucide-react";
+import {
+  User,
+  Key,
+  AtSign,
+  Phone,
+  LogIn,
+  CircleUserRound,
+  MapPinned,
+  Map,
+} from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import { getUser } from "../utils/utils";
 
 const Signup = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (getUser()) {
+      navigate("/auth/dashboard");
+    }
+  }, [navigate]);
   const [formData, setFormData] = React.useState({
     name: "",
     email: "",
@@ -47,6 +66,8 @@ const Signup = () => {
       data.append("city", city);
       data.append("avatar", e.target.avatar.files[0]); // Append file to FormData
 
+      console.log(data);
+
       const response = await fetch(
         `${import.meta.env.VITE_SERVER_HOST}/user/signup`,
         {
@@ -83,12 +104,12 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex justify-center h-screen sm:scale-75 xl:scale-95">
-      <div className="flex justify-between rounded-2xl bg-white shadow-2xl items-center w-[900px] mt-10">
+    <div className="flex justify-center items-center h-screen sm:scale-75 xl:scale-95">
+      <div className="flex justify-between rounded-2xl bg-white shadow-2xl items-center w-[900px] mt-10 max-h-fit ">
         <div className="w-[400px]">
           <img src={bg} alt="" />
         </div>
-        <div className=" bg-[#6C0DFF] items-center justify-center flex flex-col w-[500px]  rounded-r-2xl h-full">
+        <div className=" bg-[#6C0DFF] items-center justify-center flex flex-col w-[500px]  rounded-r-2xl h-full py-5">
           <h1 className="text-4xl mb-12 shadow-2xl text-white">Sign Up</h1>
           <form
             action=""
@@ -137,7 +158,8 @@ const Signup = () => {
               />
             </div>
             <div className="flex items-center ">
-              <Key className="mr-4" color="#fff" />
+              <Map className="mr-4" color="#fff" />
+
               <Input
                 onChange={handleFormData}
                 type="text"
@@ -147,7 +169,7 @@ const Signup = () => {
               />
             </div>
             <div className="flex items-center ">
-              <Key className="mr-4" color="#fff" />
+              <MapPinned className="mr-4" color="#fff" />
               <Input
                 onChange={handleFormData}
                 type="text"

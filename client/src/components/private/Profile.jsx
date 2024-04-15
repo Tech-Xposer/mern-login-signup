@@ -1,36 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Card from "./Card";
-import { getUser } from "../../utils/utils";
 import bg from "../../assets/profile.png";
 import EditUserProfile from "./EditUserProfile";
+import { getUser } from "../../utils/utils";
 
 const Profile = () => {
   const [editMode, setEditMode] = useState(false);
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")) || {});
-
-  const avatar = user?.avatar
-    ? `${import.meta.env.VITE_AVATAR_URL}/${user.avatar}`
-    : null;
-
-  useEffect(() => {
-    // You can use useEffect here if you want to update the user state later based on certain conditions
-  }, []); // Add dependencies if necessary
-
+  const [user] = useState(JSON.parse(localStorage.getItem("user")) || {});
+  const avatar = user?.avatar ? `${import.meta.env.VITE_AVATAR_URL}/${user.avatar}` : null;
+console.log(avatar);
   const handleEditToggle = () => {
-    setEditMode((prevMode) => !prevMode); // Toggle edit mode
+    setEditMode((prevMode) => !prevMode);
   };
 
   return (
     <div className="flex flex-row justify-center">
       <div>
         <img
-          src={bg} // Background image
+          src={bg}
           alt={`Profile of ${user?.name}`}
-          style={{ mixBlendMode: "multiply" }} // Style applied to image
+          style={{ mixBlendMode: "multiply" }}
         />
       </div>
       {editMode ? (
-        // Conditional rendering based on edit mode
         <EditUserProfile
           user={user}
           avatar={avatar}

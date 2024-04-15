@@ -1,35 +1,48 @@
-import React, { useEffect, useState } from "react";
-import {
-  getToken,
-  removeToken,
-  removeUser,
-  setToken,
-  setUser,
-} from "../../utils/utils";
-import { toast, ToastContainer } from "react-toastify";
-import { Outlet, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
 import Sidebar from "./Sidebar";
-
+import { Outlet } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 const Dashboard = () => {
-
-
+ /*  const fetchCurrentUser = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SERVER_HOST}/auth/current-user`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (data.success) {
+        setUser(data.data);
+        localStorage.setItem("role", data.data.role);
+      } else {
+        removeToken();
+        removeUser();
+        toast.error("Please Login!");
+        navigate("/");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred. Please try again later.");
+      // Handle error (e.g., show error message to user)
+    }
+  }; */
   useEffect(() => {
     document.title = "MERN AuthGuardian | Home";
   }, []);
 
-  // if (loading) {
-  //   // Show loading indicator while fetching data
-  //   return <div>Loading...</div>;
-  // }
-
   return (
-    <div className="flex bg-gray-200">
-      <div className="w-[300px]">
-        <Sidebar />
+    <div className="flex bg-gray-200 h-screen overflow-y-hidden w-full">
+      <div className="fixed w-64">
+        <Sidebar/>
       </div>
-      <div className="w-full flex items-center justify-center">
+      <div className=" flex items-center justify-center ml-64 w-screen ">
         <Outlet />
       </div>
+      <ToastContainer/>
     </div>
   );
 };

@@ -1,16 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getToken, removeToken, removeUser, setUser } from "../../utils/utils";
+import { getToken, removeToken, removeUser } from "../../utils/utils";
 import { toast } from "react-toastify";
+import Spinner from "../Spinner";
 
 const PrivateRoute = ({ Component }) => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
       const token = getToken();
       if (!token) {
-        navigate("/");
+        handleUnauthorizedAccess();
         return;
       }
 
@@ -26,23 +28,33 @@ const PrivateRoute = ({ Component }) => {
         );
         const data = await response.json();
         if (data.success) {
-          setUser(data.data);
+          localStorage.setItem("user", JSON.stringify(data.data));
           localStorage.setItem("role", data.data.role);
         } else {
-          removeToken();
-          removeUser();
-          toast.error("Please Login!");
-          navigate("/");
+          handleUnauthorizedAccess();
         }
       } catch (error) {
         console.error(error);
         toast.error("An error occurred. Please try again later.");
         // Handle error (e.g., show error message to user)
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchUser();
-  }, [navigate]);
+  }, []);
+
+  const handleUnauthorizedAccess = () => {
+    localStorage.clear()
+    toast.error("Please Login!");
+    navigate("/");
+  };
+
+  if (loading) {
+    // Display a loading indicator
+    return <Spinner/>
+  }
 
   return <Component />;
 };

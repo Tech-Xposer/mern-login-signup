@@ -12,6 +12,7 @@ const ChangePassword = () => {
       [name]: value,
     });
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(userFormData);
@@ -44,6 +45,7 @@ const ChangePassword = () => {
       .then((data) => {
         console.log(data);
         if (data.success) {
+          setUserFormData({password:"",newPassword:"",confirmPassword:""});
           toast.success("Password changed successfully");
         }
 
@@ -75,6 +77,7 @@ const ChangePassword = () => {
             name="password"
             color="#6C0DFF"
             onChange={handleChange}
+            value={userFormData.password}
           />
           <Input
             type="password"
@@ -82,6 +85,7 @@ const ChangePassword = () => {
             name="newPassword"
             color="#6C0DFF"
             onChange={handleChange}
+            value={userFormData.newPassword}
           />
           <Input
             type="password"
@@ -89,6 +93,7 @@ const ChangePassword = () => {
             name="confirmPassword"
             color="#6C0DFF"
             onChange={handleChange}
+            value={userFormData.confirmPassword}
           />
           <button
             type="submit"
