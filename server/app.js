@@ -10,7 +10,7 @@ const app = express();
 //using middlesware
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:4173","https://authguardian-five.vercel.app/"],
+    origin: [process.env.CORS_ORIGIN, "http://localhost:5173"],
     credentials: true,
   }),
 );
