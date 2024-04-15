@@ -1,23 +1,16 @@
 const nodemailer = require("nodemailer");
 
-// const transporter = nodemailer.createTransport({
-//     service: 'gmail',
-//     port:587,
-//     secure: true,
-//     secureConnection:false,
-//     auth: {
-//         user: process.env.ADMIN_MAIL,
-//         pass: process.env.ADMIN_PASSWORD
-//     }
-// })
-var transporter = nodemailer.createTransport({
-  host: "live.smtp.mailtrap.io",
-  port: 587,
-  auth: {
-    user: "api",
-    pass: process.env.ADMIN_PASSWORD,
-  },
-});
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    port:587,
+    secure: true,
+    secureConnection:false,
+    auth: {
+        user: process.env.ADMIN_MAIL,
+        pass: process.env.ADMIN_PASSWORD
+    }
+})
+
 const sendEmail = async (email, mailContent) => {
   try {
     const info = await transporter.sendMail({
