@@ -4,12 +4,11 @@ import { getUser } from "../../utils/utils";
 
 const Card = ({onEdit}) => {
   const user = getUser();
-  console.log(user);
   const avatar = user?.avatar ? `${import.meta.env.VITE_AVATAR_URL}/${user.avatar}` : null;
   return (
     <div className="container flex mx-auto text-center p-8 border border-gray-300 rounded-md shadow-md bg-white w-[600px] h-[300px]">
-      <div className="left w-[200px]">
-        <img src={avatar} alt={user?.name} className="rounded-full w-[200px]" />
+      <div className="p-4">
+        <img src={avatar} alt={user?.name} className="rounded-full w-[200px] h-[200px]" />
         <p>{user?.name}</p>
       </div>
       <div className="gap-5 flex flex-col ">
@@ -19,9 +18,6 @@ const Card = ({onEdit}) => {
             <p className="text-[12px]">{user?.city}, {user?.state}</p>
           </div>
           <div className="bg-[#14807e] flex h-full w-[100px] items-center justify-center text-white text-sm gap-3 cursor-pointer" onClick={onEdit}>
-            {/* <button onClick={onEdit} className="flex items-center gap-2">
-              <Pencil size={16} /> Edit
-            </button> */}
             <Pencil size={16} /> Edit
           </div>
         </div>

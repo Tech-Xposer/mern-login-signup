@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import bg from "../assets/Mobile login-pana.png";
-
 
 import Input from "./inputs/Input";
 import {
@@ -19,6 +18,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { getUser } from "../utils/utils";
 
 const Signup = () => {
+  const [imageName, setImageName] = useState();
   const navigate = useNavigate();
   useEffect(() => {
     if (getUser()) {
@@ -73,9 +73,7 @@ const Signup = () => {
         {
           method: "POST",
           headers: {
-            "Access-Control-Allow-Credentials": "true",
-            "Access-Control-Allow-Headers":
-              "Origin, X-Requested-With, Content-Type, Accept",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: data,
         }
@@ -90,7 +88,6 @@ const Signup = () => {
         toast.error(data.message || "Signup failed");
       }
     } catch (error) {
-      console.error("Error during signup:", error);
       toast.error("An error occurred during signup. Please try again later.");
     }
   };
@@ -188,16 +185,18 @@ const Signup = () => {
                   accept="image/*"
                   className="hidden"
                   name="avatar"
+                  onChange={(e) => {
+                    setImageName(e.target.files[0].name);
+                  }}
                 />
 
                 <div className="bg-white border-1 p-2 rounded-lg w-[300px] shadow-2xl transition-all duration-300 pl-3 focus:outline-none text-[#6C0DFF]">
-                  {formData.avatar ? formData.avatar : "Profile Picture"}
+                  {imageName ? imageName : "Profile Picture"}
                 </div>
               </label>
             </div>
             <button
               type="submit"
-              value="Login"
               className="border-2 p-2 rounded-xl bg-white text-[#6C0DFF] px-4 shadow-2xl w-[100px] "
             >
               Signup

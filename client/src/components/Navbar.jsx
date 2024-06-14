@@ -16,19 +16,19 @@ const Navbar = () => {
       </div> */}
       <div className="nav-icons">
         <ul className="flex gap-3">
-          <li>
+          <li className="hover:scale-125 transition-transform ">
             <Github />
           </li>
-          <li>
+          <li className="hover:scale-125 transition-transform ">
             <Linkedin color="#0077B5"/>
           </li>
-          <li>
+          <li className="hover:scale-125 transition-transform ">
             <Twitter color="#1DA1F2"/>
           </li>
-          <li>
+          <li className="hover:scale-125 transition-transform ">
             <Instagram color="#e401b3" />
           </li>
-          <li>
+          <li className="hover:scale-125 transition-transform ">
             <Facebook color="#316FF6" />
           </li>
         </ul>

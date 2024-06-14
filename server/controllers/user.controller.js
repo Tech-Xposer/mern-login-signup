@@ -14,18 +14,28 @@ const postUser = async (req, res) => {
   const { name, email, password, mobile, state, city } = req.body;
   try {
     console.log(req.body);
-  
     postUserSignupValidator(name, email, password, mobile, city, state);
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       throw new ApiError(409, "User already registered");
     }
     const avatar = req.file ? req.file.filename : null;
-    const user = await User.create({ name, email, password, mobile, avatar, state, city });
+    const user = await User.create({
+      name,
+      email,
+      password,
+      mobile,
+      avatar,
+      state,
+      city,
+    });
 
     const verificationToken = user.createEmailVerificationToken();
     const verificationLink = `${process.env.BASE_URL}/api/v1/auth/verify/${verificationToken}`;
-    const checkMail = await sendEmail(email, userVerificationTemplate(name, verificationLink));
+    const checkMail = await sendEmail(
+      email,
+      userVerificationTemplate(name, verificationLink),
+    );
     console.log(checkMail);
     return res
       .status(201)
@@ -44,8 +54,8 @@ const postUser = async (req, res) => {
 };
 
 const generateResetPasswordEmail = async (req, res) => {
-  const { email } = req.body;
-
+  const { email } = req.body || req.params;
+  console.log(req.body);
   try {
     if (!email) throw new ApiError(400, "Email is required");
     if (!isEmail(email)) throw new ApiError(400, "Invalid Email");
@@ -72,14 +82,14 @@ const postResetPassword = async (req, res) => {
     if (!isJWT(token)) throw new ApiError(400, "Invalid Token");
     if (!password || !confirmPassword)
       throw new ApiError(400, "All fields required");
+    if (password !== confirmPassword)
+      throw new ApiError(400, "Passwords do not match");
+    if (!isStrongPassword(password))
+      throw new ApiError(400, "Password Not Strong");
     const { _id } = decodeToken(token);
     const user = await User.findById(_id);
     if (!user) throw new ApiError(404, "User not found");
-    if (password !== confirmPassword)
-      throw new ApiError(400, "Passwords do not match");
     user.password = password;
-    if (!isStrongPassword(password))
-      throw new ApiError(400, "Password Not Strong");
     await user.save();
     return res
       .status(200)

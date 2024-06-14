@@ -7,6 +7,7 @@ import Input from "./inputs/Input";
 import { setToken, getUser } from "../utils/utils";
 import animationData from "../assets/lotties/login.json";
 import Spinner from "./Spinner";
+import ForgotPassword from "./ForgotPassword";
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -14,6 +15,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+
+  const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false);
 
   useEffect(() => {
     if (getUser()) {
@@ -153,7 +156,7 @@ const Login = () => {
               </p>
             </NavLink>
             <p className="text-orange-400">OR</p>
-            <button onClick={handleResetPassword}>
+            <button onClick={()=>{setShowResetPasswordDialog(true)}}>
               <p className="text-orange-400 flex gap-1 items-center">
                 Forgot your password? Reset Here
               </p>
@@ -161,6 +164,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      {showResetPasswordDialog &&< ForgotPassword onCancel={()=>{setShowResetPasswordDialog(false)}}/>}
       <ToastContainer />
     </div>
   );

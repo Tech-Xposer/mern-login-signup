@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Card from "./Card";
 import bg from "../../assets/profile.png";
 import EditUserProfile from "./EditUserProfile";
-import { getUser } from "../../utils/utils";
+
 
 const Profile = () => {
   const [editMode, setEditMode] = useState(false);
@@ -10,7 +10,7 @@ const Profile = () => {
   const avatar = user?.avatar ? `${import.meta.env.VITE_AVATAR_URL}/${user.avatar}` : null;
 console.log(avatar);
   const handleEditToggle = () => {
-    setEditMode((prevMode) => !prevMode);
+    setEditMode(!editMode);
   };
 
   return (
@@ -22,15 +22,15 @@ console.log(avatar);
           style={{ mixBlendMode: "multiply" }}
         />
       </div>
-      {editMode ? (
+      {editMode &&
         <EditUserProfile
           user={user}
           avatar={avatar}
           onCancel={handleEditToggle}
         />
-      ) : (
+      }
+       
         <Card user={user} avatar={avatar} onEdit={handleEditToggle} />
-      )}
     </div>
   );
 };

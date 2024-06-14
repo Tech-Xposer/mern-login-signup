@@ -3,7 +3,7 @@ import _, { map } from "underscore";
 
 const Home = () => {
   const [users, setUsers] = useState([]);
-
+  const [count, setCount] = useState(0);
   const fetchAllUsers = async () => {
     const response = await fetch(
       `${import.meta.env.VITE_SERVER_HOST}/admin/users`,
@@ -23,7 +23,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if(localStorage.getItem('role') === 'admin'){
+    if (localStorage.getItem("role") === "admin") {
       fetchAllUsers();
     }
   }, []);
@@ -47,10 +47,18 @@ const Home = () => {
             <th className="px-4 py-2" onClick={() => handleSortByName("email")}>
               Email
             </th>
-            <th className="px-4 py-2" onClick={() => setUsers(_.sortBy(users, "role",'desc'))}>
+            <th
+              className="px-4 py-2"
+              onClick={() => setUsers(_.sortBy(users, "role", "desc"))}
+            >
               Role
             </th>
-            <th className="px-4 py-2" onClick={() => handleSortByName("isActive")}>Status</th>
+            <th
+              className="px-4 py-2"
+              onClick={() => handleSortByName("isActive")}
+            >
+              Status
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -69,6 +77,7 @@ const Home = () => {
           ))}
         </tbody>
       </table>
+      
     </div>
   );
 };

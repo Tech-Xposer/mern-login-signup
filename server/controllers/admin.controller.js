@@ -72,9 +72,29 @@ const deleteUserById = async (req, res) => {
       .json(new ApiError(error.statusCode || 500, error.message));
   }
 }
+const changeUserRole = async (req, res) => {
+  const { _id } = req.params;
+  console.log(_id);
+  if(!_id) throw new ApiError(400, "User Id Required");
+  try {
+    const user = await User.findById(_id);
+    if (!user) throw new ApiError(404, "User Not Found");
+    user.role = user.role === "admin" ? "user" : "admin";
+    await user.save();
+    return res
+      .status(200)
+      .json(responseHandler(200, "User Role Changed Successfully"));
+  } catch (error) {
+    return res
+    .status(error.statusCode || 500)
+    .json(new ApiError(error.statusCode || 500, error.message));
+  }
+}
+
 module.exports = {
   getAllUsers,
   changeUserStatus,
   getUserById,
-  deleteUserById
+  deleteUserById,
+  changeUserRole
 };

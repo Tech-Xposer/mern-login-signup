@@ -20,23 +20,32 @@ import Home from "./components/private/Home";
 import ResetPassword from "./components/ResetPassword";
 
 const App = () => {
-  const role = localStorage.getItem("role");
-
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Layout />}>
-  
-        <Route index path='/' element={<Login />} />
+        <Route index path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        
+        <Route
+          path="/user/change-password/:token"
+          element={<ResetPassword />}
+        />
+
         {/* Private Routes */}
-        <Route path="/auth" element={<PrivateRoute Component={Dashboard} />} >
-          <Route index path="dashboard" element={<PrivateRoute Component={Home} />} />
-          <Route path="profile" element={<PrivateRoute Component={Profile} />} />
-          {<  Route path="users" element={<PrivateRoute Component={User}/>} />}
-          <Route path="change-password" element={<PrivateRoute Component={ChangePassword}/>} />
+        <Route path="/auth" element={<PrivateRoute Component={Dashboard} />}>
+          <Route
+            index
+            path="dashboard"
+            element={<PrivateRoute Component={Home} />}
+          />
+          <Route
+            path="profile"
+            element={<PrivateRoute Component={Profile} />}
+          />
+          {<Route path="users" element={<PrivateRoute Component={User} />} />}
+          <Route
+            path="change-password"
+            element={<PrivateRoute Component={ChangePassword} />}
+          />
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Route>

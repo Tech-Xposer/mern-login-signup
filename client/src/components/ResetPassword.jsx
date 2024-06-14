@@ -1,26 +1,26 @@
 import React from "react";
-import bg from "../assets/secure.png";
 import Input from "./inputs/Input";
+
 const ResetPassword = () => {
-  const handleSubmit = (e) => {
-    e.preventdefault();
-  };
-  const handleFormData = () => {};
   return (
-    <div className="flex justify-center items-center">
-      <div className="">
-        <img src={bg} alt="" />
-      </div>
-      <div className="">
-        <form method="POST" onSubmit={handleSubmit} className="flex flex-col items-center">
-          <h1>Reset Password</h1>
+    <div className="flex justify-center items-center   ">
+        
+      <div className="flex justify-center items-center flex-col shadow-2xl bg-gray-200 p-10" >
+        <h1 className="text-3xl">Reset Password</h1>
+        <form action="post" className="flex flex-col gap-10 mt-10">
           <Input
-            type="email"
-            placeholder="Email"
-            name="email"
-            onChange={handleFormData}
+            placeholder="Enter your new password"
+            type="password"
+            name="password"
           />
-          <button type="submit">Reset Password</button>
+          <Input
+            placeholder="Confirm your new password"
+            type="password"
+            name="confirmPassword"
+          />
+          <button className="border-2 p-2 rounded-xl bg-orange-500 text-white px-4 shadow-2xl">
+            Submit
+          </button>
         </form>
       </div>
     </div>

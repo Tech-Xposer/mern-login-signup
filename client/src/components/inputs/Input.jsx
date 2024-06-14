@@ -12,7 +12,7 @@ const Input = (props) => {
     <div className="relative">
       <input
         {...props}
-        className="border-1 p-2 rounded-lg w-[300px] shadow-2xl transition-all duration-300 pl-3 texst-gray-500 focus:outline-none "
+        className="border-1 p-2 rounded-lg w-[300px] shadow-2xl transition-all duration-300 pl-3 text-gray-500 focus:outline-teal-100 bg-blue-50"
         type={showPassword ? "text" : props.type } visibility='hidden'
       />
       {props.type === "password" && (

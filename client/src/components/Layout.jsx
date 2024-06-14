@@ -6,7 +6,7 @@ const Layout = () => {
   const { pathname } = useLocation();
 
   return (
-    <>
+    < >
       {pathname.startsWith("/auth") ? null : <Navbar />}
       <Outlet />
     </>
